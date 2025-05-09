@@ -18,4 +18,7 @@ public class CitaService {
     public List<Cita> getAllCitas() {
         return citaRepository.findAll();
     }
+    public void deleteCita(Long id) {
+        citaRepository.deleteById(id);
+    }
 }
