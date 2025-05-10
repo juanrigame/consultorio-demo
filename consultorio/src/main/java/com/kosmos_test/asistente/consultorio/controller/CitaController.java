@@ -1,5 +1,8 @@
 package com.kosmos_test.asistente.consultorio.controller;
 
+import com.kosmos_test.asistente.consultorio.exception.CitaConflictException;
+import com.kosmos_test.asistente.consultorio.exception.DoctorCitaLimitException;
+import com.kosmos_test.asistente.consultorio.exception.PacienteCitaOverlapException;
 import com.kosmos_test.asistente.consultorio.model.Cita;
 import com.kosmos_test.asistente.consultorio.service.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,7 @@ public class CitaController {
     private CitaService citaService;
 
     @PostMapping("/crear")
-    public ResponseEntity<Cita> createCita(@RequestBody Cita cita) {
+    public ResponseEntity<Cita> createCita(@RequestBody Cita cita) throws DoctorCitaLimitException, CitaConflictException, PacienteCitaOverlapException {
         Cita savedCita = citaService.saveCita(cita);
         return new ResponseEntity<>(savedCita, HttpStatus.CREATED);
     }
