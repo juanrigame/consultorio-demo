@@ -37,6 +37,7 @@
             <th>Fecha y Hora</th>
             <th>Doctor</th>
             <th>Consultorio</th>
+            <th>Paciente</th>
             <th>Acciones</th>
         </tr>
         </thead>
@@ -46,6 +47,7 @@
             <td th:text="${#dates.format(cita.hora, 'yyyy-MM-dd HH:mm')}"></td>
             <td th:text="${cita.doctor.nombre + ' ' + cita.doctor.apellidoPaterno + ' ' + cita.doctor.apellidoMaterno}"></td>
             <td th:text="${cita.consultorio.officeNumber + ' (Piso ' + cita.consultorio.floor + ')'}"></td>
+            <td th:text="${cita.paciente}"></td>
             <td>
                 <form th:action="@{/citas/eliminar/{id}(id=${cita.id})}" method="post">
                     <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
@@ -59,6 +61,7 @@
     </table>
 
     <a th:href="@{/}" class="btn btn-secondary">Volver al Menú</a>
+    <a th:href="@{/citas/alta}" class="btn btn-secondary">Alta de Cita</a>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

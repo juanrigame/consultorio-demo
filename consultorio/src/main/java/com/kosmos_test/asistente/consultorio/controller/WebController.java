@@ -1,5 +1,8 @@
 package com.kosmos_test.asistente.consultorio.controller;
 
+import com.kosmos_test.asistente.consultorio.exception.CitaConflictException;
+import com.kosmos_test.asistente.consultorio.exception.DoctorCitaLimitException;
+import com.kosmos_test.asistente.consultorio.exception.PacienteCitaOverlapException;
 import com.kosmos_test.asistente.consultorio.model.Cita;
 import com.kosmos_test.asistente.consultorio.model.Consultorio;
 import com.kosmos_test.asistente.consultorio.model.Doctor;
@@ -11,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -43,21 +47,37 @@ public class WebController {
         List<Consultorio> consultorios = consultorioService.getAllConsultorios();
         model.addAttribute("doctors", doctors);
         model.addAttribute("consultorios", consultorios);
+        model.addAttribute("paciente", "");
+
         return "cita_alta";
     }
 
     @PostMapping("/citas/guardar")
     public String guardarCita(@RequestParam("hora") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") Date hora,
                               @RequestParam("doctor") Doctor doctor,
-                              @RequestParam("consultorio") Consultorio consultorio) {
+                              @RequestParam("consultorio") Consultorio consultorio,
+                              @RequestParam("paciente") String paciente,
+                                RedirectAttributes redirectAttributes) {
         Cita cita = new Cita();
         cita.setHora(hora);
         cita.setDoctor(doctor);
         cita.setConsultorio(consultorio);
+        cita.setPaciente(paciente);
         System.out.println(cita);
 
-        citaService.saveCita(cita);
-        return "redirect:/citas/alta";
+        try {
+            citaService.saveCita(cita);
+            return "redirect:/citas/consultar";
+        } catch (CitaConflictException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/citas/alta";
+        } catch (DoctorCitaLimitException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/citas/alta";
+        } catch (PacienteCitaOverlapException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/citas/alta";
+        }
     }
 
     @GetMapping("/citas/consultar")

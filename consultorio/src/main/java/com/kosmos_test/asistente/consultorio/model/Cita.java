@@ -1,4 +1,5 @@
 package com.kosmos_test.asistente.consultorio.model;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,6 @@ public class Cita {
     @ManyToOne
     @JoinColumn(name = "consultorio_id", referencedColumnName = "id")
     private Consultorio consultorio;
+
+    private String paciente;
 }
